@@ -210,7 +210,7 @@ func (gui *Gui) handleServiceRemoveMenu(g *gocui.Gui, v *gocui.View) error {
 		},
 	}
 
-	return gui.createCommandMenu(options, gui.Tr.RemovingStatus)
+	return gui.createServiceCommandMenu(options, gui.Tr.RemovingStatus)
 }
 
 func (gui *Gui) handleServiceStop(g *gocui.Gui, v *gocui.View) error {
@@ -349,7 +349,7 @@ func (gui *Gui) handleServiceRestartMenu(g *gocui.Gui, v *gocui.View) error {
 	return gui.createMenu("", options, len(options), handleMenuPress)
 }
 
-func (gui *Gui) createCommandMenu(options []*commandOption, status string) error {
+func (gui *Gui) createServiceCommandMenu(options []*commandOption, status string) error {
 	handleMenuPress := func(index int) error {
 		if options[index].command == "" {
 			return nil

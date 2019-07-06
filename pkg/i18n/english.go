@@ -24,10 +24,12 @@ type TranslationSet struct {
 	UnattachableContainerError                 string
 	CannotAttachStoppedContainerError          string
 	CannotAccessDockerSocketError              string
+	UnknownInternalFunctionError               string
 
 	Donate                     string
 	Cancel                     string
 	CustomCommandTitle         string
+	BulkCommandTitle           string
 	Remove                     string
 	HideStopped                string
 	ForceRemove                string
@@ -41,6 +43,7 @@ type TranslationSet struct {
 	StoppingStatus             string
 	RemovingStatus             string
 	RunningCustomCommandStatus string
+	RunningBulkCommandStatus   string
 	RemoveService              string
 	Stop                       string
 	Restart                    string
@@ -67,6 +70,8 @@ type TranslationSet struct {
 	PruneContainers            string
 	PruneVolumes               string
 	ConfirmPruneContainers     string
+	ConfirmStopContainers      string
+	ConfirmRemoveContainers    string
 	ConfirmPruneImages         string
 	ConfirmPruneVolumes        string
 	PruningStatus              string
@@ -74,6 +79,7 @@ type TranslationSet struct {
 	PressEnterToReturn         string
 	ViewRestartOptions         string
 	RunCustomCommand           string
+	ViewBulkCommands           string
 
 	LogsTitle                string
 	ConfigTitle              string
@@ -93,6 +99,7 @@ func englishSet() TranslationSet {
 		RestartingStatus:           "restarting",
 		StoppingStatus:             "stopping",
 		RunningCustomCommandStatus: "running custom command",
+		RunningBulkCommandStatus:   "running bulk command",
 
 		RunningSubprocess:                          "running subprocess",
 		NoViewMachingNewLineFocusedSwitchStatement: "No view matching newLineFocused switch statement",
@@ -102,6 +109,7 @@ func englishSet() TranslationSet {
 		UnattachableContainerError:        "Container does not support attaching. You must either run the service with the '-it' flag or use `stdin_open: true, tty: true` in the docker-compose.yml file",
 		CannotAttachStoppedContainerError: "You cannot attach to a stopped container, you need to start it first (which you can actually do with the 'r' key) (yes I'm too lazy to do this automatically for you) (pretty cool that I get to communicate one-on-one with you in the form of an error message though)",
 		CannotAccessDockerSocketError:     "Can't access docker socket at: unix:///var/run/docker.sock\nRun lazydocker as root or read https://docs.docker.com/install/linux/linux-postinstall/",
+		UnknownInternalFunctionError:      "No internal function found with the name of '{{ .InternalFunction }}', perhaps you misspelt it (or the lazydocker developers forgot to test their code, or the internal function has been removed/changed)",
 
 		Donate:  "Donate",
 		Confirm: "Confirm",
@@ -137,6 +145,7 @@ func englishSet() TranslationSet {
 		PruneImages:        "prune unused images",
 		ViewRestartOptions: "view restart options",
 		RunCustomCommand:   "run predefined custom command",
+		ViewBulkCommands:   "view bulk commands",
 
 		AnonymousReportingTitle:  "Help make lazydocker better",
 		AnonymousReportingPrompt: "Would you like to enable anonymous reporting data to help improve lazydocker?",
@@ -150,6 +159,7 @@ func englishSet() TranslationSet {
 		ImagesTitle:               "Images",
 		VolumesTitle:              "Volumes",
 		CustomCommandTitle:        "Custom Command:",
+		BulkCommandTitle:          "Bulk Command:",
 		ErrorTitle:                "Error",
 		LogsTitle:                 "Logs",
 		ConfigTitle:               "Config",
@@ -169,6 +179,8 @@ func englishSet() TranslationSet {
 		NotEnoughSpace:             "Not enough space to render panels",
 		ConfirmPruneImages:         "Are you sure you want to prune all unused images?",
 		ConfirmPruneContainers:     "Are you sure you want to prune all stopped containers?",
+		ConfirmStopContainers:      "Are you sure you want to stop all containers?",
+		ConfirmRemoveContainers:    "Are you sure you want to remove all containers?",
 		ConfirmPruneVolumes:        "Are you sure you want to prune all unused volumes?",
 		StopService:                "Are you sure you want to stop this service's containers?",
 		StopContainer:              "Are you sure you want to stop this container?",

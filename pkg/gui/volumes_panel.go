@@ -257,10 +257,9 @@ func (gui *Gui) handleVolumesCustomCommand(g *gocui.Gui, v *gocui.View) error {
 		return nil
 	}
 
-	commandObject := gui.DockerCommand.NewCommandObject(
-		commands.CommandObject{
-			Volume: volume,
-		})
+	commandObject := gui.DockerCommand.NewCommandObject(commands.CommandObject{
+		Volume: volume,
+	})
 
 	customCommands := gui.Config.UserConfig.CustomCommands.Volumes
 

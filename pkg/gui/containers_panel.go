@@ -517,3 +517,29 @@ func (gui *Gui) handleContainersCustomCommand(g *gocui.Gui, v *gocui.View) error
 
 	return gui.createCustomCommandMenu(customCommands, commandObject)
 }
+
+func (gui *Gui) handleStopContainers(g *gocui.Gui, v *gocui.View) error {
+	return gui.createConfirmationPanel(gui.g, v, gui.Tr.Confirm, gui.Tr.ConfirmStopContainers, func(g *gocui.Gui, v *gocui.View) error {
+		return gui.WithWaitingStatus(gui.Tr.StoppingStatus, func() error {
+
+			for _, container := range gui.DockerCommand.Containers {
+				container.Stop()
+			}
+
+			return nil
+		})
+	}, nil)
+}
+
+func (gui *Gui) handleRemoveContainers(g *gocui.Gui, v *gocui.View) error {
+	return gui.createConfirmationPanel(gui.g, v, gui.Tr.Confirm, gui.Tr.ConfirmRemoveContainers, func(g *gocui.Gui, v *gocui.View) error {
+		return gui.WithWaitingStatus(gui.Tr.RemovingStatus, func() error {
+
+			for _, container := range gui.DockerCommand.Containers {
+				container.Remove(types.ContainerRemoveOptions{Force: true})
+			}
+
+			return nil
+		})
+	}, nil)
+}

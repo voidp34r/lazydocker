@@ -4,8 +4,11 @@ import (
 	"context"
 	"net/http"
 	"path"
+	"strings"
 
 	"github.com/docker/docker/api/types"
+	"github.com/docker/docker/api/types/swarm"
+	"github.com/docker/docker/errdefs"
 )
 
 // Ping pings the server and returns the value of the "Docker-Experimental",
@@ -14,7 +17,11 @@ import (
 // by the daemon.
 func (cli *Client) Ping(ctx context.Context) (types.Ping, error) {
 	var ping types.Ping
-	req, err := cli.buildRequest("HEAD", path.Join(cli.basePath, "/_ping"), nil, nil)
+
+	// Using cli.buildRequest() + cli.doRequest() instead of cli.sendRequest()
+	// because ping requests are used during API version negotiation, so we want
+	// to hit the non-versioned /_ping endpoint, not /v1.xx/_ping
+	req, err := cli.buildRequest(http.MethodHead, path.Join(cli.basePath, "/_ping"), nil, nil)
 	if err != nil {
 		return ping, err
 	}
@@ -26,24 +33,27 @@ func (cli *Client) Ping(ctx context.Context) (types.Ping, error) {
 			// Server handled the request, so parse the response
 			return parsePingResponse(cli, serverResp)
 		}
+	} else if IsErrConnectionFailed(err) {
+		return ping, err
 	}
 
-	req, err = cli.buildRequest("GET", path.Join(cli.basePath, "/_ping"), nil, nil)
+	req, err = cli.buildRequest(http.MethodGet, path.Join(cli.basePath, "/_ping"), nil, nil)
 	if err != nil {
 		return ping, err
 	}
 	serverResp, err = cli.doRequest(ctx, req)
+	defer ensureReaderClosed(serverResp)
 	if err != nil {
 		return ping, err
 	}
-	defer ensureReaderClosed(serverResp)
 	return parsePingResponse(cli, serverResp)
 }
 
 func parsePingResponse(cli *Client, resp serverResponse) (types.Ping, error) {
 	var ping types.Ping
 	if resp.header == nil {
-		return ping, cli.checkResponseErr(resp)
+		err := cli.checkResponseErr(resp)
+		return ping, errdefs.FromStatusCode(err, resp.statusCode)
 	}
 	ping.APIVersion = resp.header.Get("API-Version")
 	ping.OSType = resp.header.Get("OSType")
@@ -53,5 +63,13 @@ func parsePingResponse(cli *Client, resp serverResponse) (types.Ping, error) {
 	if bv := resp.header.Get("Builder-Version"); bv != "" {
 		ping.BuilderVersion = types.BuilderVersion(bv)
 	}
-	return ping, cli.checkResponseErr(resp)
+	if si := resp.header.Get("Swarm"); si != "" {
+		parts := strings.SplitN(si, "/", 2)
+		ping.SwarmStatus = &swarm.Status{
+			NodeState:        swarm.LocalNodeState(parts[0]),
+			ControlAvailable: len(parts) == 2 && parts[1] == "manager",
+		}
+	}
+	err := cli.checkResponseErr(resp)
+	return ping, errdefs.FromStatusCode(err, resp.statusCode)
 }

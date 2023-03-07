@@ -22,6 +22,6 @@ func (cli *Client) ContainerRemove(ctx context.Context, containerID string, opti
 	}
 
 	resp, err := cli.delete(ctx, "/containers/"+containerID, query, nil)
-	ensureReaderClosed(resp)
-	return wrapResponseError(err, resp, "container", containerID)
+	defer ensureReaderClosed(resp)
+	return err
 }

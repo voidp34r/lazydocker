@@ -33,7 +33,7 @@ require (
 	github.com/onsi/ginkgo v1.8.0 // indirect
 	github.com/onsi/gomega v1.5.0 // indirect
 	github.com/opencontainers/go-digest v1.0.0-rc1 // indirect
-	github.com/opencontainers/image-spec v1.0.1 // indirect
+	github.com/opencontainers/image-spec v1.0.2 // indirect
 	github.com/sirupsen/logrus v1.3.0
 	github.com/spkg/bom v0.0.0-20160624110644-59b7046e48ad
 	github.com/stretchr/testify v1.2.2
